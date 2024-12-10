@@ -1,5 +1,10 @@
 package com.desafiomv.controllers;
 
+import com.desafiomv.dtos.ClienteDTO;
+import com.desafiomv.repositorios.ClienteRepository;
+import com.desafiomv.services.ClientePFService;
+import com.desafiomv.services.ClientePJService;
+import com.desafiomv.services.ClienteService;
 import com.desafiomv.utils.Cliente;
 import jakarta.validation.Valid;
 import org.apache.coyote.Response;
@@ -14,9 +19,19 @@ import java.util.List;
 @RequestMapping("/clientes")
 public class ClienteContoller {
 
+    final ClientePFService clientePFService;
+    final ClienteService clienteService;
+    final ClientePJService clientePJService;
+
+    public ClienteContoller(ClientePFService clientePFService, ClienteService clienteService, ClientePJService clientePJService) {
+        this.clientePFService = clientePFService;
+        this.clienteService = clienteService;
+        this.clientePJService = clientePJService;
+    }
+
     @GetMapping("/")
     public ResponseEntity<List<Cliente>> listarClientes() {
-        List<Cliente> clientes = new ArrayList<>();
+        List<Cliente> clientes = clienteService.listarTodosAtivos();
 
         return ResponseEntity.ok(clientes);
     }
@@ -28,8 +43,11 @@ public class ClienteContoller {
 
 
     @PostMapping("/")
-    public ResponseEntity<Cliente> salvar(@RequestBody @Valid Cliente cliente) {
-        return ResponseEntity.ok(new Cliente());
+    public ResponseEntity<Cliente> salvar(@RequestBody @Valid ClienteDTO clienteDTO) {
+
+        var cliente = !clienteDTO.cpf().isEmpty()  ? clientePFService.salvar(clienteDTO) : clientePJService.salvar(clienteDTO);
+
+        return ResponseEntity.ok(cliente);
     }
 
 

@@ -1,6 +1,6 @@
 package com.desafiomv.repositorios;
 
-import com.desafiomv.entidades.ClientePJ;
+import com.desafiomv.entidades.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
