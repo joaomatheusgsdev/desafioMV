@@ -1,5 +1,6 @@
 package com.desafiomv.services;
 
+import com.desafiomv.entidades.Conta;
 import com.desafiomv.repositorios.ClienteRepository;
 import com.desafiomv.utils.Cliente;
 import org.springframework.stereotype.Service;
@@ -19,5 +20,9 @@ public class ClienteService {
     public List<Cliente> listarTodosAtivos() {
 
         return clienteRepository.findAllByHabilitadoTrue();
+    }
+
+    public Cliente buscarPorConta(Conta conta) {
+        return clienteRepository.findByContas(conta);
     }
 }

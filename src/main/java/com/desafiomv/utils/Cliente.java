@@ -2,11 +2,14 @@ package com.desafiomv.utils;
 
 import com.desafiomv.entidades.*;
 import com.desafiomv.enums.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.Set;
 
 @Inheritance(strategy = InheritanceType.JOINED)
 @Entity
@@ -45,6 +48,14 @@ public class Cliente {
     @JoinColumn(name = "endereco_id", referencedColumnName = "id")
     @JsonIgnore
     private Endereco endereco;
+
+    @OneToMany(mappedBy = "cliente" , cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference
+    Set<Conta> contas;
+
+    @ManyToOne
+    @JoinColumn(name = "empresa_id", referencedColumnName = "id")
+    private Empresa empresa;
 
     public Long getId() {
         return id;
