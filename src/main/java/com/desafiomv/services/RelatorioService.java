@@ -10,13 +10,6 @@ import java.sql.*;
 
 public class RelatorioService {
 
-    @Value("${banco.username}")
-    private String bancoUsername;
-
-    @Value("${banco.senha}")
-    private String bancoPassword;
-
-
     public RelatorioService() {
     }
 
