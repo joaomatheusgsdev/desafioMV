@@ -27,4 +27,4 @@ spring.datasource.driver.class-name=oracle.jdbc.OracleDriver
 
 url.api=http://localhost:8080/
 banco.username=SYSTEM
-banco.senha=35795100@Jck
+banco.senha=OR4CL3@TesTE
