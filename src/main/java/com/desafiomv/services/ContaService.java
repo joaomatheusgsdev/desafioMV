@@ -4,8 +4,11 @@ import com.desafiomv.entidades.Conta;
 import com.desafiomv.dtos.ContaDto;
 import com.desafiomv.entidades.Movimentacao;
 import com.desafiomv.repositorios.ContaRepository;
+import com.desafiomv.utils.Cliente;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Service
@@ -17,11 +20,19 @@ public class ContaService {
         this.contaRepository = contaRepository;
     }
 
+
     public List<Conta> listarContas() {
         return contaRepository.findAll();
     }
 
-    public Conta salvarConta(ContaDto contaDto) {
+    public Conta salvarConta(Cliente cliente, ContaDto contaDto) {
+
+
+        if(contaRepository.findByNumeroContaAndCodigoAgencia(contaDto.numeroConta(), contaDto.codigoAgencia()) != null) {
+            throw new RuntimeException("Conta já cadastrada");
+        }
+
+
 
         Conta conta = new Conta();
 
@@ -33,6 +44,8 @@ public class ContaService {
 
         conta.setCodigoAgencia(contaDto.codigoAgencia());
         conta.setDigitoAgencia(contaDto.digitoAgencia());
+        
+        conta.setTipoConta(contaDto.tipoConta());
 
 
         if(contaDto.movimentacoes() != null && !contaDto.movimentacoes().isEmpty()) {
@@ -46,15 +59,28 @@ public class ContaService {
 
         }
 
+        conta.atualizacaoDeSaldo();
+        cliente.addConta(conta);
 
         return contaRepository.save(conta);
     }
 
-    public Conta buscarPorId(Long id) {
-        return contaRepository.findById(id).orElse(null);
-    }
-
     public Conta buscarPorNumeroContaAndCodigoAgencia(String numeroConta, String codigoAgencia) {
         return contaRepository.findByNumeroContaAndCodigoAgencia(numeroConta, codigoAgencia);
+    }
+
+    @Transactional
+    public void deletarConta(String agencia, String numeroConta) {
+
+        Conta conta = contaRepository.findContaByCodigoAgenciaAndNumeroConta(agencia, numeroConta);
+
+        if (!conta.getMovimentacoes().isEmpty()) {
+           conta.setHabilitada(false);
+           conta.setDataAtualização(ZonedDateTime.now());
+           contaRepository.save(conta);
+        } else {
+           contaRepository.delete(conta);
+        }
+
     }
 }

@@ -8,10 +8,10 @@ import lombok.Value;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
+import java.util.List;
 
 
 public record ClienteDTO(
-        Long id,
         @NotNull(message = "O nome não pode ser nulo")
         @NotEmpty(message = "O nome não pode estar vazio")
         @NotBlank(message = "O nome não pode estar em branco")
@@ -29,12 +29,14 @@ public record ClienteDTO(
         String tipoCliente,
 
         Boolean habilitado,
-        @NotNull
+
         String cpf,
         ZonedDateTime dataNascimento,
 
         String razaoSocial,
 
-        EnderecoDto endereco
+        EnderecoDto endereco,
+
+        List<ContaDto> contas
 ) {
 }

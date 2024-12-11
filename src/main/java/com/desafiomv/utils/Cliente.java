@@ -4,11 +4,13 @@ import com.desafiomv.entidades.*;
 import com.desafiomv.enums.*;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -21,13 +23,15 @@ public class Cliente {
     public Cliente() {
     }
 
-    public Cliente(Long id, String nome, String email, TipoCliente tipoCliente, Boolean habilitado, Endereco endereco) {
+    public Cliente(Long id, String nome, String email, TipoCliente tipoCliente, Boolean habilitado, Endereco endereco, Set<Conta> contas, Empresa empresa) {
         this.id = id;
         this.nome = nome;
         this.email = email;
         this.tipoCliente = tipoCliente;
         this.habilitado = habilitado;
         this.endereco = endereco;
+        this.contas = contas;
+        this.empresa = empresa;
     }
 
     @Id
@@ -45,17 +49,19 @@ public class Cliente {
     private Boolean habilitado;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "endereco_id", referencedColumnName = "id")
-    @JsonIgnore
+    @JoinColumn(name = "endereco_id")
+    @JsonManagedReference
     private Endereco endereco;
 
-    @OneToMany(mappedBy = "cliente" , cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference
-    Set<Conta> contas;
+    Set<Conta> contas = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "empresa_id", referencedColumnName = "id")
+    @JsonIgnore
     private Empresa empresa;
+
 
     public Long getId() {
         return id;
@@ -103,5 +109,40 @@ public class Cliente {
 
     public void setEndereco(Endereco endereco) {
         this.endereco = endereco;
+    }
+
+    public Set<Conta> getContas() {
+        return contas;
+    }
+
+    public void setContas(Set<Conta> contas) {
+        this.contas = contas;
+    }
+
+    public Empresa getEmpresa() {
+        return empresa;
+    }
+
+    public void setEmpresa(Empresa empresa) {
+        this.empresa = empresa;
+    }
+
+    public void addConta(Conta conta) {
+        this.contas.add(conta);
+    }
+
+
+    @Override
+    public String toString() {
+        return "Cliente{" +
+                "id=" + id +
+                ", nome='" + nome + '\'' +
+                ", email='" + email + '\'' +
+                ", tipoCliente=" + tipoCliente +
+                ", habilitado=" + habilitado +
+                ", endereco=" + endereco +
+                ", contas=" + contas +
+                ", empresa=" + empresa +
+                '}';
     }
 }

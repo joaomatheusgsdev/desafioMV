@@ -7,6 +7,7 @@ import lombok.*;
 
 
 import java.time.ZonedDateTime;
+import java.util.Set;
 
 @Builder
 @Entity
@@ -19,11 +20,10 @@ public class ClientePF extends Cliente {
         super();
     }
 
-    public ClientePF(Long id, String nome, String email, TipoCliente tipoCliente, Boolean habilitado, Endereco endereco, String cpf, ZonedDateTime dataNascimento) {
-        super(id, nome, email, tipoCliente, habilitado, endereco);
+    public ClientePF(Long id, String nome, String email, TipoCliente tipoCliente, Boolean habilitado, Endereco endereco, Set<Conta> contas, Empresa empresa, String cpf, ZonedDateTime dataNascimento) {
+        super(id, nome, email, tipoCliente, habilitado, endereco, contas, empresa);
         this.cpf = cpf;
         this.dataNascimento = dataNascimento;
-        super.tipoCliente = TipoCliente.PESSOAFISICA;
     }
 
     @Column
@@ -49,12 +49,13 @@ public class ClientePF extends Cliente {
         this.dataNascimento = dataNascimento;
     }
 
+
     @Override
     public String toString() {
         return "ClientePF{" +
                 "cpf='" + cpf + '\'' +
                 ", dataNascimento=" + dataNascimento +
                 ", tipoCliente=" + tipoCliente +
-                '}';
+                "} " + super.toString();
     }
 }

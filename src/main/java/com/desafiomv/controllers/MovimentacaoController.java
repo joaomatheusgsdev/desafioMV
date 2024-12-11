@@ -19,15 +19,6 @@ public class MovimentacaoController {
         this.movimentacaoService = movimentacaoService;
     }
 
-    @GetMapping("/")
-    public ResponseEntity<List<Movimentacao>> listarMovimentacoes() {
-
-        List<Movimentacao> movs = new ArrayList<>();
-     //   List<Movimentacao> movimentacoes = movimentacaoService.listarTodos();
-
-        return ResponseEntity.ok(movs);
-    }
-
 
     @PostMapping("/")
     public ResponseEntity<Movimentacao> salvarMovimentacao(@RequestBody  MovimentacaoTransacaoDto movimentacaoTransacaoDto) {
@@ -35,5 +26,11 @@ public class MovimentacaoController {
         Movimentacao mov = movimentacaoService.salvarMovimentacao(movimentacaoTransacaoDto);
 
         return ResponseEntity.ok(mov);
+    }
+
+
+    @GetMapping("/")
+    public ResponseEntity<List<Movimentacao>> listarMovimentacoes() {
+        return ResponseEntity.ok(movimentacaoService.listarMovimentacoes());
     }
 }

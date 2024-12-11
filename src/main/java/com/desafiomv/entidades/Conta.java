@@ -1,6 +1,7 @@
 package com.desafiomv.entidades;
 
 import com.desafiomv.enums.TipoConta;
+import com.desafiomv.enums.TipoDeTransacao;
 import com.desafiomv.utils.Cliente;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -8,6 +9,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.ZonedDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -32,20 +35,25 @@ public class Conta {
     private TipoConta tipoConta;
 
     @ManyToOne
-    @JoinColumn(name = "cliente_id", referencedColumnName = "id")
+    @JoinColumn(name = "cliente_id")
     @JsonManagedReference
     private Cliente cliente;
 
-    @OneToMany(mappedBy = "conta", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
-    Set<Movimentacao> movimentacoes;
 
     @ManyToOne
-    @JoinColumn(name = "empresa_id", referencedColumnName = "id")
+    @JoinColumn(name = "empresa_id")
     @JsonManagedReference
     private Empresa empresa;
 
+    @OneToMany(mappedBy = "conta", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    Set<Movimentacao> movimentacoes = new HashSet<>();
+
     private BigDecimal saldo;
+
+    ZonedDateTime dataAtualização;
+
+    private boolean habilitada = true;
 
     public Conta(Long id, String codigoBanco, String codigoAgencia, String numeroConta, String digitoConta, String digitoAgencia, TipoConta tipoConta, Cliente cliente, Set<Movimentacao> movimentacoes, Empresa empresa, BigDecimal saldo) {
         this.id = id;
@@ -57,8 +65,10 @@ public class Conta {
         this.tipoConta = tipoConta;
         this.cliente = cliente;
         this.movimentacoes = movimentacoes;
-        this.empresa = empresa;
-        this.saldo = saldo;
+        this.empresa = null;
+        this.saldo = BigDecimal.valueOf(0.0);
+        this.habilitada = true;
+        this.dataAtualização = null;
     }
 
     public Conta() {
@@ -146,11 +156,49 @@ public class Conta {
         return saldo;
     }
 
-    public void setSaldo(BigDecimal saldo) {
-        this.saldo = saldo;
+    public boolean isHabilitada() {
+        return habilitada;
+    }
+
+    public void setHabilitada(boolean habilitada) {
+        this.habilitada = habilitada;
+    }
+
+    public ZonedDateTime getDataAtualização() {
+        return dataAtualização;
+    }
+
+    public void setDataAtualização(ZonedDateTime dataAtualização) {
+        this.dataAtualização = dataAtualização;
     }
 
     public void addMovimentacao(Movimentacao movimentacao) {
         this.movimentacoes.add(movimentacao);
     }
+
+    public void atualizacaoDeSaldo() {
+        BigDecimal saldoAtualizado = BigDecimal.valueOf(0.0);
+
+        for (Movimentacao movimentacao : this.movimentacoes) {
+            if (movimentacao.getTipoDeTransacao().equals(TipoDeTransacao.CREDITO)) {
+                saldoAtualizado = saldoAtualizado.add(movimentacao.getValor());
+            } else {
+                saldoAtualizado = saldoAtualizado.subtract(movimentacao.getValor());
+            }
+        }
+
+        this.saldo = saldoAtualizado;
+
+    }
+
+    public int movimentacoesUltimosTrintaDias() {
+        int contadorMovimentacoes = 0;
+        for (Movimentacao movimentacao : this.movimentacoes) {
+            if (movimentacao.getDataDeAtualizacao().isAfter(ZonedDateTime.now().minusDays(30))) {
+                contadorMovimentacoes++;
+            }
+        }
+        return contadorMovimentacoes;
+    }
+
 }

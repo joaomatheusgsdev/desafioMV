@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Where;
 
+import java.util.Set;
+
 
 @Entity
 @Table(name = "cliente_pj")
@@ -21,8 +23,8 @@ import org.hibernate.annotations.Where;
 @Builder
 public class ClientePJ extends Cliente {
 
-  public ClientePJ(Long id, String nome, String email, TipoCliente tipoCliente, Boolean habilitado, Endereco endereco, String cnpj, String razaoSocial) {
-    super(id, nome, email, tipoCliente, habilitado, endereco);
+  public ClientePJ(Long id, String nome, String email, TipoCliente tipoCliente, Boolean habilitado, Endereco endereco, Set<Conta> contas, Empresa empresa, String cnpj, String razaoSocial) {
+    super(id, nome, email, tipoCliente, habilitado, endereco, contas, empresa);
     this.cnpj = cnpj;
     this.razaoSocial = razaoSocial;
   }

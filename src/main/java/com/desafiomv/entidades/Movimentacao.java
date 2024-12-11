@@ -40,8 +40,8 @@ public class Movimentacao {
         this.id = id;
         this.descricao = descricao;
         this.data = data;
-        this.valor = valor;
-        this.dataDeCriacao = dataDeCriacao;
+        this.valor = BigDecimal.valueOf(0.0);
+        this.dataDeCriacao = ZonedDateTime.now();
         this.dataDeAtualizacao = dataDeAtualizacao;
         this.tipoDeTransacao = tipoDeTransacao;
         this.conta = conta;

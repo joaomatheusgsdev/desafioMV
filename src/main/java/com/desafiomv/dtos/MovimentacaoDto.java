@@ -5,6 +5,7 @@ import com.desafiomv.enums.TipoDeTransacao;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.ZonedDateTime;
 
 /**
  * DTO for {@link com.desafiomv.entidades.Movimentacao}
@@ -12,6 +13,7 @@ import java.math.BigDecimal;
 public record MovimentacaoDto(String descricao,
                               String data,
                               BigDecimal valor,
-                              TipoDeTransacao tipoDeTransacao) implements Serializable {
+                              TipoDeTransacao tipoDeTransacao,
+                              ZonedDateTime dataDeCriacao) implements Serializable {
 
 }

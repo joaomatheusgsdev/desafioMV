@@ -36,16 +36,11 @@ public class ClienteContoller {
         return ResponseEntity.ok(clientes);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Cliente> buscarCliente(@PathVariable Long id) {
-        return ResponseEntity.ok(new Cliente());
-    }
 
+    @PostMapping("/{cnpjEmpresa}")
+    public ResponseEntity<Cliente> salvar(@PathVariable String cnpjEmpresa, @RequestBody ClienteDTO clienteDTO) {
 
-    @PostMapping("/")
-    public ResponseEntity<Cliente> salvar(@RequestBody @Valid ClienteDTO clienteDTO) {
-
-        var cliente = !clienteDTO.cpf().isEmpty()  ? clientePFService.salvar(clienteDTO) : clientePJService.salvar(clienteDTO);
+        var cliente = clienteService.criarCliente(clienteDTO, cnpjEmpresa);
 
         return ResponseEntity.ok(cliente);
     }
